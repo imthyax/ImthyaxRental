@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImthyaxRental</title>
+    <meta name="description" content="ImthyaxRental - Rental services in Kodagu, Karnataka.">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #090909;
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 25px;
+        }
+
+        h1 {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #aaa;
+            line-height: 1.7;
+        }
+
+        .error {
+            margin-top: 25px;
+            color: #d9a0a0;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>ImthyaxRental</h1>
+        <p>Finding your rental website...</p>
+        <p class="error" id="status"></p>
+    </main>
+
+    <script>
+        async function openWebsite() {
+            const status = document.getElementById("status");
+
+            try {
+                const response = await fetch(
+                    "https://api.github.com/repos/imthyax/ImthyaxRental/git/trees/main?recursive=1"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not access repository.");
+                }
+
+                const data = await response.json();
+
+                const files = data.tree
+                    .filter(file =>
+                        file.type === "blob" &&
+                        file.path.toLowerCase().endsWith("/index.html")
+                    )
+                    .sort((a, b) =>
+                        a.path.split("/").length - b.path.split("/").length
+                    );
+
+                if (files.length > 0) {
+                    const folder = files[0].path.substring(
+                        0,
+                        files[0].path.lastIndexOf("/")
+                    );
+
+                    window.location.replace(
+                        "/" + "ImthyaxRental/" + folder + "/"
+                    );
+                } else {
+                    status.textContent =
+                        "Website files not found. Upload your actual website files to GitHub.";
+                }
+
+            } catch (error) {
+                status.textContent = error.message;
+            }
+        }
+
+        openWebsite();
+    </script>
+</body>
+</html>
